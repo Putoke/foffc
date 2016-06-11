@@ -6,7 +6,7 @@
 
 void run_lexer(ifstream & file) {
     char ch;
-    while (file >> ch) {
+    while (file.get(ch)) {
         Token * token = tokenMatch(ch, file);
         cout << token->toString() + " ";
         delete token;
@@ -14,6 +14,10 @@ void run_lexer(ifstream & file) {
 }
 
 Token * tokenMatch(char & ch, ifstream & file) {
+    while ((ch == ' ' || ch == '\n' || ch == '\r' || ch == '\t') && !file.eof()) {
+        file.get(ch);
+    }
+
     switch (ch) {
         case ':':       return new Token(COLON) ;
         case ';':       return new Token(SEMICOLON);
@@ -32,19 +36,19 @@ Token * tokenMatch(char & ch, ifstream & file) {
         case '*':       return new Token(TIMES);
 
         case '/':
-            file >> ch;
+            file.get(ch);
             if (ch == '/') {
                 while (file.peek() != '\n') {
-                    file >> ch;
+                    file.get(ch);
                 }
-                file >> ch; //One extra time to skip the newline
+                file.get(ch); //One extra time to skip the newline
                 return tokenMatch(ch, file);
             } else if (ch == '*') {
-                while (file >> ch) {
+                while (file.get(ch)) {
                     if (ch == '*') {
-                        file >> ch;
+                        file.get(ch);
                         if (ch == '/') {
-                            file >> ch;
+                            file.get(ch);
                             return tokenMatch(ch, file);
                         }
                     }
@@ -53,21 +57,21 @@ Token * tokenMatch(char & ch, ifstream & file) {
             return new Token(DIV);
 
         case '=':
-            file >> ch;
+            file.get(ch);
             if (ch == '=')
                 return new Token(EQUALS);
             file.seekg (-1, file.cur); //Move file pointer back one step so the loop won't miss a char
             return new Token(EQSIGN);
 
         case '&':
-            file >> ch;
+            file.get(ch);
             if (ch == '&')
                 return new Token(AND);
             file.seekg (-1, file.cur); //Move file pointer back one step so the loop won't miss a char
             return new Token(BAD);
 
         case '|':
-            file >> ch;
+            file.get(ch);
             if (ch == '|')
                 return new Token(OR);
             file.seekg (-1, file.cur); //Move file pointer back one step so the loop won't miss a char
@@ -77,20 +81,39 @@ Token * tokenMatch(char & ch, ifstream & file) {
     }
 }
 
-Token * findID(char & ch, ifstream & file) {
-    if(isalpha(ch)) {
+Token * findID (char & ch, ifstream & file) {
+    if (isalpha (ch)) {
         string b;
-        while(isalpha(ch) || isdigit(ch) || ch == '_') {
+        while (isalpha (ch) || isdigit (ch) || ch == '_') {
             b += ch;
-            file >> ch;
+            file.get(ch);
         }
         auto found = keywords.find(b);
         file.seekg (-1, file.cur); //Move file pointer back one step so the loop won't miss a char
         if (found != keywords.end()) {
-            return new Token(found->second);
+            return new Token (found->second);
         } else {
-            return new ID(b);
+            return new ID (b);
         }
     }
+    if (isdigit (ch)) {
+        string b;
+        while (isdigit (ch)) {
+            b += ch;
+            file.get (ch);
+        }
+        return new INTLIT (atoi (b.c_str ()));
+    }
+    if (ch == '"') {
+        string b;
+        file.get (ch);
+        while (ch != '"') {
+            b += ch;
+            file.get (ch);
+        }
+        return new STRLIT (b);
+    }
+    if (file.eof ())
+        return new Token(ENOF);
     return new Token(BAD);
 }

@@ -49,6 +49,8 @@ string tokenKindToString(TokenKind kind) {
         case FOREIGN:   return "foreign";
         case AS:        return "as";
         case IDKIND:    return "idkind";
+        case INTLITKIND:return "intlitkind";
+        case STRLITKIND:return "strlitkind";
         default:        return "";
     }
 }

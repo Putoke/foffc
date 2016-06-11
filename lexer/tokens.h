@@ -53,7 +53,9 @@ enum TokenKind {
     STROF,
     FOREIGN,
     AS,
-    IDKIND
+    IDKIND,
+    INTLITKIND,
+    STRLITKIND
 };
 
 string tokenKindToString(TokenKind kind);
@@ -71,6 +73,20 @@ public:
     string value;
     ID(string v) : Token(IDKIND) {value = v;};
     virtual string toString() {return "ID("+value+")";};
+};
+
+class INTLIT : public Token {
+public:
+    int value;
+    INTLIT(int v) : Token(INTLITKIND) {value = v;};
+    virtual string toString() {return "INT("+to_string(value)+")";};
+};
+
+class STRLIT : public Token {
+public:
+    string value;
+    STRLIT(string v) : Token(STRLITKIND) {value = v;};
+    virtual string toString() {return "STR("+value+")";};
 };
 
 #endif //FOFFC_TOKENS_H
