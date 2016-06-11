@@ -13,10 +13,14 @@
 
 using namespace std;
 
-const map<string, TokenKind> keywords = {{"method", METHOD}};
+const map<string, TokenKind> keywords = {{"class", CLASS}, {"method", METHOD}, {"var", VAR}, {"unit", UNIT},
+                                         {"String", STRING}, {"extends", EXTENDS}, {"int", INT}, {"bool", BOOLEAN},
+                                         {"while", WHILE}, {"if", IF}, {"else", ELSE}, {"length", LENGTH},
+                                         {"true", TRUE}, {"false", FALSE}, {"self", SELF}, {"new", NEW},
+                                         {"println", PRINTLN}, {"strof", STROF}, {"foreign", FOREIGN}, {"as", AS}};
 
 void run_lexer(ifstream & file);
-Token tokenMatch(char & ch, ifstream & file);
-Token findID(char & ch, ifstream & file);
+Token * tokenMatch(char & ch, ifstream & file);
+Token * findID(char & ch, ifstream & file);
 
 #endif //FOFFC_LEXER_H

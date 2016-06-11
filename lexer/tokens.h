@@ -11,18 +11,66 @@
 using namespace std;
 
 enum TokenKind {
-    METHOD,
     BAD,
-    ENOF
+    ENOF,
+    COLON,
+    SEMICOLON,
+    DOT,
+    COMMA,
+    EQSIGN,
+    EQUALS,
+    BANG,
+    LPAREN,
+    RPAREN,
+    LBRACKET,
+    RBRACKET,
+    LBRACE,
+    RBRACE,
+    AND,
+    OR,
+    LESSTHAN,
+    PLUS,
+    MINUS,
+    TIMES,
+    DIV,
+    CLASS,
+    METHOD,
+    VAR,
+    UNIT,
+    STRING,
+    EXTENDS,
+    INT,
+    BOOLEAN,
+    WHILE,
+    IF,
+    ELSE,
+    LENGTH,
+    TRUE,
+    FALSE,
+    SELF,
+    NEW,
+    PRINTLN,
+    STROF,
+    FOREIGN,
+    AS,
+    IDKIND
 };
 
 string tokenKindToString(TokenKind kind);
 
 class Token {
 public:
-    Token(TokenKind k) {kind = k;};
     TokenKind kind;
-    string toString() {return tokenKindToString(kind);};
+    Token(TokenKind k) {kind = k;};
+    virtual ~Token() {};
+    virtual string toString() {return tokenKindToString(kind);};
+};
+
+class ID : public Token {
+public:
+    string value;
+    ID(string v) : Token(IDKIND) {value = v;};
+    virtual string toString() {return "ID("+value+")";};
 };
 
 #endif //FOFFC_TOKENS_H
